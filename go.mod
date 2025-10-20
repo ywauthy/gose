@@ -5,7 +5,7 @@ module github.com/stv0g/gose
 
 go 1.23.0
 
-toolchain go1.25.2
+toolchain go1.25.3
 
 require (
 	github.com/aws/aws-sdk-go v1.55.8
