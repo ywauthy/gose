@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	units "github.com/docker/go-units"
-	"github.com/mitchellh/mapstructure"
+	mapstructure "github.com/go-viper/mapstructure/v2"
 	"github.com/mozillazg/go-slugify"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v3"
@@ -200,10 +200,14 @@ func NewConfig(configFile string) (*Config, error) {
 		}
 	}
 
-	if err := cfg.UnmarshalExact(cfg, viper.DecodeHook(func(c *mapstructure.DecoderConfig) {
-		c.DecodeHook = mapstructure.TextUnmarshallerHookFunc()
-		c.TagName = "json"
-	})); err != nil {
+	opts := []viper.DecoderConfigOption{
+		viper.DecodeHook(mapstructure.TextUnmarshallerHookFunc()),
+		func(dc *mapstructure.DecoderConfig) {
+			dc.TagName = "json"
+		},
+	}
+
+	if err := cfg.Viper.UnmarshalExact(cfg, opts...); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
